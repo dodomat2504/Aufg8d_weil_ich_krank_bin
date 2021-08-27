@@ -16,8 +16,8 @@ public:
     T getData() const {return data;}
     SmartPointer<DListItem<T>>& getNext() {return next;}
     SmartPointer<DListItem<T>>& getPrev() {return prev;}
-    void setNext(SmartPointer<DListItem<T>>& next) {this->next = next;}
-    void setPrev(SmartPointer<DListItem<T>>& prev) {this->prev = prev;}
+    void setNext(SmartPointer<DListItem<T>> next) {this->next = next;}
+    void setPrev(SmartPointer<DListItem<T>> prev) {this->prev = prev;}
 };
 
 template<typename T>
@@ -37,24 +37,24 @@ private:
         }
         return counter;
     }
+
 public:
     DList<T>(): length(0) {}
     ~DList<T>() {
         while (!empty()) pop_back();
-        first = last = nullptr;
     }
+
 
     bool empty() const {return length == 0;}
     int getLength() const {return length;}
 
     void push_back(const T& data) {
-        SmartPointer<DListItem<T>> leerer_muell(nullptr);
         if (empty()) {
-            DListItem<T>* newItem = new DListItem<T>(data, leerer_muell, leerer_muell);
+            DListItem<T>* newItem = new DListItem<T>(data, nullptr, nullptr);
             first = newItem;
             last = first;
         } else {
-            DListItem<T>* newItem = new DListItem<T>(data, leerer_muell, last);
+            DListItem<T>* newItem = new DListItem<T>(data, nullptr, last);
             last = nullptr;
             last = newItem;
             last->getPrev()->setNext(last);
@@ -63,13 +63,12 @@ public:
     }
 
     void push_front(const T& data) {
-        SmartPointer<DListItem<T>> leerer_muell(nullptr);
         if (empty()) {
-            DListItem<T>* newItem = new DListItem<T>(data, leerer_muell, leerer_muell);
+            DListItem<T>* newItem = new DListItem<T>(data, nullptr, nullptr);
             first = newItem;
             last = first;
         } else {
-            DListItem<T>* newItem = new DListItem<T>(data, first, leerer_muell);
+            DListItem<T>* newItem = new DListItem<T>(data, first, nullptr);
             first = nullptr;
             first = newItem;
             first->getNext()->setPrev(first);
@@ -78,7 +77,6 @@ public:
     }
 
     void pop_back() {
-        SmartPointer<DListItem<T>> leerer_muell(nullptr);
         if (!empty()) {
             if (length == 1) {
                 first = nullptr;
@@ -86,7 +84,7 @@ public:
             } else {
                 SmartPointer<DListItem<T>> pre_last = last->getPrev();
                 last = nullptr;
-                pre_last->setNext(leerer_muell);
+                pre_last->setNext(nullptr);
                 last = pre_last;
             }
             length--;
@@ -94,7 +92,6 @@ public:
     }
 
     void pop_front() {
-        SmartPointer<DListItem<T>> leerer_muell(nullptr);
         if (!empty()) {
             if (length == 1) {
                 first = nullptr;
@@ -102,7 +99,7 @@ public:
             } else {
                 SmartPointer<DListItem<T>> post_first = first->getNext();
                 first = nullptr;
-                post_first->setPrev(leerer_muell);
+                post_first->setPrev(nullptr);
                 first = post_first;
             }
             length--;
@@ -110,7 +107,6 @@ public:
     }
 
     bool insert(const T& data, const int index) {
-        SmartPointer<DListItem<T>> leerer_muell(nullptr);
         if (index >= 0 && index < length) {
             if (index == 0) {
                 push_front(data);
@@ -183,16 +179,15 @@ public:
     }
 
     void invert() {
-        SmartPointer<DListItem<T>> leerer_muell(nullptr);
         if (!empty() && length > 1) {
             SmartPointer<DListItem<T>> helper = first;
             first = last;
             last = helper;
 
             first->setNext(first->getPrev());
-            first->setPrev(leerer_muell);
+            first->setPrev(nullptr);
             last->setPrev(last->getNext());
-            last->setNext(leerer_muell);
+            last->setNext(nullptr);
 
             if (length == 2) return;
 

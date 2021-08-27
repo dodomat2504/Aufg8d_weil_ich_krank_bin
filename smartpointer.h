@@ -18,12 +18,12 @@ template<typename T>
 class ReferenceCounter {
 private:
     static std::vector<Reference<T>*> refs;
-public:
+
     static bool hasReference(T* ptr) {
         for (Reference<T>* ref : refs) if (ref->ptr == ptr) return true;
         return false;
     }
-
+public:
     static void addPtrToReferences(T* ptr) {
         if (hasReference(ptr)) {
             for (Reference<T>* ref : refs) {
@@ -64,22 +64,21 @@ template<typename T>
 class SmartPointer {
 private:
     T* zeigerAufObjekt;
-
-    void loescheObjekt() {
-        if (zeigerAufObjekt != nullptr) ReferenceCounter<T>::removePtrFromReferences(zeigerAufObjekt);
-    }
 public:
     SmartPointer<T>(T* p = nullptr): zeigerAufObjekt(p) {
         if (p != nullptr) ReferenceCounter<T>::addPtrToReferences(p);
     }
+
     ~SmartPointer<T>() {
-        loescheObjekt();
+        if (zeigerAufObjekt != nullptr) ReferenceCounter<T>::removePtrFromReferences(zeigerAufObjekt);
     }
 
-    SmartPointer<T>(SmartPointer<T>& sm) {
-        zeigerAufObjekt = sm.Ptr();
-        if (zeigerAufObjekt != nullptr) ReferenceCounter<T>::addPtrToReferences(zeigerAufObjekt);
-    }
+    T* Ptr() {return zeigerAufObjekt;}
+
+
+    /*
+     * Operatoren
+     */
 
     T* operator->() const {return zeigerAufObjekt;}
     T& operator*() const {return *zeigerAufObjekt;}
@@ -106,8 +105,6 @@ public:
     }
 
     operator bool() const {return zeigerAufObjekt != nullptr;}
-
-    T* Ptr() {return zeigerAufObjekt;}
 };
 
 #endif // SMARTPOINTER_H
